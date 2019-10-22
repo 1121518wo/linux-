@@ -1,0 +1,95 @@
+ 1#include <stdio.h>
+ 2#include <sys/types.h>
+ 3#include <sys/stat.h>
+ 4#include <fcntl.h>
+ 5#include <unistd.h>
+ 6#include <string.h>
+ 7int main(int argc, char *argv[])
+ 8{
+ 9int fd1 = -1, fd2 = -1;     // fd 就是file descriptor，文件描述符
+10char buf[100] = {0};
+11char writebuf[20] = "l love linux";
+12int ret = -1;
+13// 第一步：打开文件
+14fd1 = open("a.txt", O_RDWR | O_TRUNC | O_CREAT | O_APPEND, 0666);
+15fd2 = open("a.txt", O_RDWR | O_TRUNC | O_CREAT | O_APPEND, 0666);
+16//fd = open("a.txt", O_RDONLY);
+17if ((-1 == fd1) || (fd2 == -1))     // 有时候也写成： (fd < 0)
+18{
+19    //printf("\n");
+20    perror("文件打开错误");
+21    // return -1;
+22    _exit(-1);
+23}
+24else
+25{
+26    printf("文件打开成功，fd1 = %d. fd2 = %d.\n", fd1, fd2);
+27}
+28 #if 1
+29while (1)
+30{
+31    // 第二步：读写文件
+32    // 写文件
+33    ret = write(fd1, "ab", 2);
+34    if (ret < 0)
+35    {
+36        //printf("write失败.\n");
+37        perror("write失败");
+38        _exit(-1);
+39    }
+40    else
+41    {
+42        printf("write成功，写入了%d个字符\n", ret);
+43    }
+44    ret = write(fd2, "cd", 2);
+45    if (ret < 0)
+46    {
+47        //printf("write失败.\n");
+48        perror("write失败");
+49        _exit(-1);
+50    }
+51    else
+52    {
+53        printf("write成功，写入了%d个字符\n", ret);
+54    }
+55    sleep(1);
+56}
+57 #endif
+58  #if 0
+59while(1)
+60{
+61    // 读文件
+62    memset(buf, 0, sizeof(buf));
+63    ret = read(fd1, buf, 2);
+64    if (ret < 0)
+65    {
+66        printf("read失败\n");
+67        _exit(-1);
+68    }
+69    else
+70    {
+71        //printf("实际读取了%d字节.\n", ret);
+72        printf("fd1：[%s].\n", buf);
+73    }
+74    sleep(1);
+75    // 读文件
+76    memset(buf, 0, sizeof(buf));
+77    ret = read(fd2, buf, 2);
+78    if (ret < 0)
+79    {
+80        printf("read失败\n");
+81        _exit(-1);
+82    }
+83    else
+84    {
+85        //printf("实际读取了%d字节.\n", ret);
+86        printf("fd2：[%s].\n", buf);
+87    }   
+88}
+89 #endif    
+90// 第三步：关闭文件
+91close(fd1);
+92close(fd2);
+93
+94_exit(0);
+95}
