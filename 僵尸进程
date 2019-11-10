@@ -1,0 +1,32 @@
+ #include<stdio.h>
+ #include<unistd.h>
+ #include<stdlib.h>
+  
+ #define ERR_EXIT(m) \
+         do \
+         {  \
+            perror(m); \
+             exit(EXIT_FAILURE); \
+        } while(0)
+ 
+int main()
+{
+     pid_t id;
+ 
+     if((id = fork()) == -1)
+        ERR_EXIT("fork");
+    else if (id == 0)
+     {
+         printf("I am the kid,my pid : %d,my father's pid : %d!\n",getpid(),getppid());
+     }
+     else
+   {
+         while(1)
+        {
+             printf("I am the father,my pid : %d!\n",getpid());
+            sleep(2);
+         }
+     }
+
+     return 0;
+ }
