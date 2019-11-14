@@ -1,0 +1,57 @@
+       #include <stdio.h>
+       #include <unistd.h>
+       #include <sys/types.h>  
+       #include <sys/wait.h>
+       #include <stdlib.h>
+       int main(void)
+      {
+	pid_t pid = -1;
+	pid_t ret = -1;
+	int status = -1;
+	
+	pid = fork();
+	if (pid > 0)
+	{
+		// 父进程
+		sleep(1);
+		printf("parent, 子进程id = %d.\n", pid);
+		//ret = wait(&status);
+		
+		
+		
+		//ret = waitpid(-1, &status, 0);    
+		/* -1表示不等待某个特定PID的子进程而是回收任意一个子进程，0表示用默认的方式（阻塞式）来进行等待，返回值ret是本次回收的子进程的PID */
+		
+		
+		/*  等待回收PID为pid的这个子进程，如果当前进程并没有一个ID号为pid的子进程，则返回值为-1；如果成功回收了pid这个子进程则返回值为回收的进程的PID  */
+		
+		//ret = waitpid(pid, &status, 0);
+		
+		
+		/* 非阻塞式    这种表示父进程要【非阻塞式】的回收子进程。
+		此时如果父进程执行waitpid时子进程已经先结束等待回收则waitpid直接回收成功，返回值是回收的子进程的PID；
+		如果父进程waitpid时子进程尚未结束则父进程立刻返回（非阻塞），但是返回值为0（表示回收不成功）。
+		*/
+		ret = waitpid(pid, &status, WNOHANG);		
+		
+		printf("子进程已经被回收，子进程pid = %d.\n", ret);
+		printf("子进程是否正常退出：%d\n", WIFEXITED(status));
+		printf("子进程是否非正常退出：%d\n", WIFSIGNALED(status));
+		printf("正常终止的终止值是：%d.\n", WEXITSTATUS(status));
+	}
+	else if (pid == 0)
+	{
+		// 子进程
+		//sleep(1);
+		printf("child pid = %d.\n", getpid());
+		return 51;
+		//exit(0);
+	}
+	else
+	{
+		perror("fork");
+		return -1;
+	}
+	
+	return 0;
+     }
